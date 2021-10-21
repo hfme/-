@@ -158,31 +158,112 @@ async getDataList(){
 ##### 组件
 
 - 命名规范
+
   - 在html中使用时：字母全小写且必须包含一个连字符
+
 - 局部注册组件模块
+
 - 基础常用小组件使用 require.context 在main.js中全局注册，避免频繁引入
+
 - 使用prop给子组件传递数据
+
   - 静态或动态prop
   - 单向数据流
+
 - 监听子组件事件
+
   - 父组件中定义方法
   - 子组件使用$emit触发事件，同时可以传递参数
+
 - 通过插槽分发内容
+
 - 动态组件与异步组件
+
   - 使用keep-alive缓存组件状态
+  - 异步组件：用工厂函数定义组件，在需要时再加载组件模块
+
+- 访问元素和组件
+
+  - `this.$root.property` (适用非常小型的有少量组件的应用)
+
+- 访问父级组件实例
+
+  - `this.$parent.property` (会使得应用更难调试和理解)
+
+- 访问子组件实例或子元素
+
+  - 在子组件html标签上加 ref
+  - this.$refs.focus()....
+  - `$refs` 只会在组件渲染完成之后生效, 避免在模板或计算属性中访问 `$refs`
+
+- 依赖注入
+
+  - provide/inject
+
+  - 在父级组件中指定需要提供给后代组件的数据或方法
+
+  - 在需要使用的后代组件中，使用inject接收
+
+  - 可以把依赖注入看作一部分“大范围有效的 prop”
+
+  - ```js
+    // 父级组件
+    provide: function () {
+      return {
+        getMap: this.getMap
+      }
+    }
+    
+    //后代组件
+    inject: ['getMap']
+    ```
 
 
 
-v-model是v-bind以及v-on配合使用的语法糖
+##### 可复用性
+
+###### 混入
+
+- 定义mixins对象
+- 在需要使用的地方引入，并注入mixins:  `mixins: [myMixin]`
+- 同名钩子函数会合并为一个数组，都会被调用，混入对象的钩子会先执行
+- 值为对象的选项，如methods, 将被合并为同一个对象，键名冲突时取组件的值
+- 数据对象data会进行递归合并，冲突时取组件数据
+- 可以自定义选项合并策略
+
+###### 自定义指令
+
+- 局部指令 directives: {}
+- 全局指令 Vue.directive('指令名', {})
+- 钩子函数 
+- 钩子函数参数 el binding vnode oldVnode
+
+###### 过滤器
+
+###### 渲染函数&JSX
+
+- 虚拟DOM 对由 Vue 组件树建立起来的整个 VNode 树的称呼
+- 
+
+```js
+// template 模板
+<h1>{{ blogTitle }}</h1>
+
+// render函数
+render: function (createElement) {
+  return createElement('h1', this.blogTitle)
+}
+```
+
+
+
+###### 插件
 
 
 
 
 
-##### 不理解
 
-- 组件上使用v-model
-- 异步组件
 
 
 
@@ -275,7 +356,7 @@ asyncCall();
 
 ##### 引用类型
 
-- 数组，可以使用 slice, concat, 扩展语法实现复制数组 （浅拷贝）
+- 数组，可以使用 **slice**, **concat**, **扩展语法**实现复制数组 （浅拷贝）
 - 对象， 扩展语法，Object.assign, （浅拷贝）  JSON.parse(JSON.stringify()) 深拷贝 
 
 ```js
