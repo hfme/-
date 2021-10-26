@@ -6,7 +6,7 @@
 
 
 
-## Vue 
+#### Vue 
 
 ##### Vue 实例
 
@@ -37,14 +37,14 @@ var vm = new Vue({
 })
 
 vm.$data === data; //true
-vm.$el = document.getElementById('example')
+vm.$el = document.getElementById('example') //true
 vm.watch....
 ```
 
 
 
 - v-if 条件渲染时可以实用key来解除复用
-- v-for
+- **v-for**
   - 遍历数组
     - (item, index) in arr
   - 遍历对象
@@ -261,6 +261,31 @@ render: function (createElement) {
 
 
 
+##### [深入响应式原理](https://www.jianshu.com/p/78b31df97b70)
+
+- Vue会遍历data选项里的property，用`Object.defineProperty` 把这些property全部转换为getter/setter.
+- 不能追踪数组和对象的变化
+  - 对象
+    - 添加响应式 property ： `this.$set(this.someObject,'b',2)`
+    - 为已有对象赋值多个新 property： `this.someObject = Object.assign({}, this.someObject, { a: 1, b: 2 })`
+  - 数组
+    - `Vue.set(vm.items, indexOfItem, newValue)`
+    - `vm.items.splice(indexOfItem, 1, newValue)`
+- 异步更新队列
+  - Vue 在更新 DOM 时是**异步**执行的
+  - 如果你想基于更新后的 DOM 状态来做点什么
+  - `Vue.nextTick(callback)`。这样回调函数将在 DOM 更新完成后被调用
+
+```js
+methods: {
+  updateMessage: async function () {
+    this.message = '已更新'
+    console.log(this.$el.textContent) // => '未更新'
+    await this.$nextTick()
+    console.log(this.$el.textContent) // => '已更新'
+  }
+}
+```
 
 
 
@@ -268,6 +293,25 @@ render: function (createElement) {
 
 
 
+##### 规模化
+
+###### 路由
+
+###### 状态管理
+
+###### [服务端渲染](https://ssr.vuejs.org/zh/#%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E6%B8%B2%E6%9F%93-ssr-%EF%BC%9F)
+
+
+
+
+
+
+
+
+
+#### Vue Router
+
+- 将组件 (components) 映射到路由 (routes)，然后告诉 Vue Router 在哪里渲染它们
 
 
 
@@ -378,3 +422,172 @@ asyncCall();
       console.log(arr1, arr2, arr3, arr4, arr5);
 ```
 
+
+
+
+
+##### 模块
+
+- 模块的整体加载:  使用星号*
+
+```js
+import * as common from './common'
+```
+
+
+
+
+
+##### 编程习惯
+
+- 优先使用const, let 取代 var
+- 静态字符串一律使用单引号或反引号，不使用双引号; 动态字符串使用反引号
+- 解构赋值
+
+```js
+// good
+const a = 'foobar';
+const b = `foo${a}bar`;
+
+// 数组成员赋值给变量
+const [first, second] = arr;
+
+// 函数的参数是对象，使用解构
+function getFullName({ firstName, lastName }) {
+}
+
+
+// 如果函数返回多个值，优先使用对象的解构赋值
+function processInput(input) {
+  return { left, right, top, bottom };
+}
+
+
+// 对象 不得随意添加新的属性
+// 不可避免，要使用Object.assign方法
+// bad
+const a = {};
+a.x = 3;
+
+// if reshape unavoidable
+const a = {};
+Object.assign(a, { x: 3 });
+
+// good
+const a = { x: null };
+a.x = 3;
+```
+
+- 数组: 
+  - 使用扩展运算符（...）拷贝数组
+  - 使用 Array.from 方法，将类似数组的对象转为数组。
+
+```js
+// good
+const itemsCopy = [...items];
+
+const nodes = Array.from(foo);
+
+
+// good
+function concatenateAll(...args) {
+  return args.join('');
+}
+```
+
+
+
+
+
+
+
+#### 正则
+
+
+
+```js
+.toLowerCase()
+.replace(/\W+/g, '-') // \W 匹配所有非字母数字字符
+.replace(/(^-|-$)/g, ''); //
+// ^ 位置字符， 开始位置
+// $ 位置字符， 结束位置
+// | 或
+```
+
+
+
+
+
+
+
+#### TypeScript
+
+- 类型注解
+  - 为函数或变量添加约束
+  - 静态的代码分析，分析代码结构和提供的类型注解
+
+
+
+
+
+
+
+
+
+#### Echarts
+
+##### 数据集
+
+- dataset 专门用来管理数据的组件
+- 数据可以被多个组件复用，**数据和配置分离**
+
+```js
+// 以前 在series中设置数据
+// 需要先处理数据，分割数据到各个类目轴中
+// 不利于多个系列共享一份数据
+// 不能基于原始数据进行图表类型、系列的映射安排
+option = {
+  xAxis: {
+    type: 'category',
+    data: ['Matcha Latte', 'Milk Tea', 'Cheese Cocoa', 'Walnut Brownie']
+  },
+  yAxis: {},
+  series: [
+    {
+      type: 'bar',
+      name: '2015',
+      data: [89.3, 92.1, 94.4, 85.4]
+    },
+    {
+      type: 'bar',
+      name: '2016',
+      data: [95.8, 89.4, 91.2, 76.9]
+    },
+    {
+      type: 'bar',
+      name: '2017',
+      data: [97.7, 83.1, 92.5, 78.1]
+    }
+  ]
+};
+```
+
+
+
+##### 数据转换 transform
+
+
+
+
+
+
+
+
+
+
+
+#### Vue常用插件
+
+##### vue-countTo
+
+- 数字滚动插件
